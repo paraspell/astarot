@@ -1,5 +1,9 @@
 ## Astarot - native XCM enhancing UI tool dedicated to Astar
 
+![astarot](https://raw.githubusercontent.com/dudo50/astarot/main/src/assets/astarot.png)
+
+## Contents
+
 [1. Introduction](#1-introduction)<br />
 [2. Overview](#2-overview)<br />
 [3. Installation](#3-installation)<br />
