@@ -7,9 +7,9 @@
 
         <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/home" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="house"></b-icon>Home</b-navbar-item>
         
-        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/relaytopara" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="arrow-right-from-bracket"></b-icon>To Relay chain</b-navbar-item>
+        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/paratorelay" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="arrow-right-from-bracket"></b-icon>To Relay chain</b-navbar-item>
 
-        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/paratorelay" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="arrow-up-from-bracket"></b-icon>From Relay chain</b-navbar-item>
+        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/relaytopara" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="arrow-up-from-bracket"></b-icon>From Relay chain</b-navbar-item>
 
         <b-navbar-item style="margin-right: 6%;"  class="top" tag="router-link" to="/paratopara" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="paper-plane"></b-icon>To Parachain</b-navbar-item>
                   
