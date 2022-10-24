@@ -1,7 +1,17 @@
 <template>
     <div id="app">
-      <p class = "intro">Transfer Polkadot's DOT to Astar</p>
-      
+
+      <p  v-if="testnetSwitch == 'Astar'" class = "intro">Transfer Polkadot's DOT to Astar</p>
+      <p  v-if="testnetSwitch == 'Shiden'" class = "intro">Transfer Kusama's KSM to Shiden</p>
+
+      <div>
+        <p style = "display: inline-block; margin-right: 15px;" class="texttt">Select network you wish to use for transfering</p>
+        <b-switch v-model="testnetSwitch"
+                true-value="Astar"
+                false-value="Shiden">
+                {{testnetSwitch}}
+        </b-switch>
+      </div>
       <div class="box" style="margin-top: 12%;  font-family: 'Anybody', cursive;">
         You are logged in as {{$store.state.account}}.
       </div>
@@ -10,7 +20,7 @@
         <b-input expanded @input.native="addrs($event)" v-model="addr"></b-input>
       </b-field>
       
-      <b-field class="textt" label-position="inside" label="Input DOT amount">
+      <b-field class="textt" label-position="inside" label="Input DOT/KSM amount">
           <b-input expanded @input.native="unit($event)" v-model="amount"></b-input>
       </b-field>
       
@@ -31,6 +41,7 @@
         return {
           addr: "" as string,   //Recipient address is stored here
           amount: 0 as number,   //Required amount to be transfered is stored here
+          testnetSwitch: "Shiden"
         };
       },
       methods: {
@@ -51,9 +62,9 @@
               this.$notify({ title: 'Error', text: 'You need to input recipient first.', type: 'error', duration: 3000,speed: 100})
             }
             else{
-              if(this.amount<5000000000)
+              if(this.amount<5000000000 && this.testnetSwitch == "Astar" || this.amount< 500000000000 && this.testnetSwitch == "Shiden")
               {
-                  this.$notify({ title: 'Error', text: 'Specified amount is less than required {5000000000} - 0.5DOT.', type: 'error', duration: 3000,speed: 100})
+                  this.$notify({ title: 'Error', text: 'Specified amount is less than required {5000000000} - 0.5DOT or {500000000000} - 0.5KSM .', type: 'error', duration: 3000,speed: 100})
               }
               else{
                 if(address == "none")
@@ -61,7 +72,13 @@
                   this.$notify({ text: 'You need to login first.',type: 'error', duration: 5000,speed: 100})
                 }
                 else{
-                  const wsProvider = new WsProvider('wss://polkadot.api.onfinality.io/public-ws');
+                  let wsProvider
+                  if(this.testnetSwitch == "Astar"){
+                    wsProvider = new WsProvider('wss://polkadot.api.onfinality.io/public-ws');
+                  }
+                  else if (this.testnetSwitch == "Shiden"){
+                    wsProvider = new WsProvider('wss://public-rpc.pinknode.io/kusama');
+                  }
                   const api = await ApiPromise.create({ provider: wsProvider });
                   var counter = 0
                   const injector = await web3FromAddress(address); // finds an injector for an address
