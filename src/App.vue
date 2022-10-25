@@ -5,7 +5,7 @@
         <h1 style="margin-right: 0.5%;" class="name first" >Astarot</h1>
         <img class="mainLogo rotate" style="margin-right: 6%;" src="./assets/img.png" />
 
-        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/home" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="house"></b-icon>Home</b-navbar-item>
+        <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="house"></b-icon>Home</b-navbar-item>
         
         <b-navbar-item class="top" tag="router-link" style="margin-right: 0.5%;" to="/paratorelay" type="is-link"><b-icon style="margin-right:5px;" size="is-small" pack="fas" icon="arrow-right-from-bracket"></b-icon>To Relay chain</b-navbar-item>
 
