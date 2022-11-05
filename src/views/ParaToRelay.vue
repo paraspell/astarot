@@ -1,8 +1,8 @@
 <template>
     <div id="app">
-  
      <p  v-if="testnetSwitch == 'Astar'" class = "intro">Transfer Polkadot's DOT from Astar to Polkadot</p>
      <p  v-if="testnetSwitch == 'Shiden'" class = "intro">Transfer Kusama's KSM from Shiden to Kusama</p>
+
       <div>
         <p style = "display: inline-block; margin-right: 15px;" class="texttt">Select network you wish to use for transfering</p>
         <b-switch v-model="testnetSwitch"
@@ -11,6 +11,7 @@
                 {{testnetSwitch}}
         </b-switch>
       </div>
+
       <div class="box" style="margin-top: 12%;  font-family: 'Anybody', cursive;">
         You are logged in as {{$store.state.account}}.
       </div>
@@ -53,16 +54,6 @@
         async addrs(value: any){
           this.addr=value.target.value
         },
-        //Used to store selected currency
-        // eslint-disable-next-line 
-        async asstid(value: any){
-          this.asst=value.target.value
-        },
-        //Used to store wss address 
-        // eslint-disable-next-line 
-        async inputwss(value: any){
-          this.wssaddr=value.target.value
-        },
         //Used to store user required transfer amount
         // eslint-disable-next-line 
         async unit(value: any){
@@ -95,7 +86,7 @@
                     wsProvider = new WsProvider('wss://rpc.shiden.astar.network');
                   }
                   const api = await ApiPromise.create({ provider: wsProvider });
-                    
+                    //API call for Parachain to Relay chain transfer scenario
                     api.tx.polkadotXcm.reserveWithdrawAssets(
                         {
                             V1: {

@@ -2,6 +2,7 @@
     <div id="app">
       <p  v-if="testnetSwitch == 'Astar'" class = "intro">Transfer Astar's ASTR to any Parachain on Polkadot</p>
       <p  v-if="testnetSwitch == 'Shiden'" class = "intro">Transfer Shiden's SDN to any Parachain on Kusama</p>
+
       <div>
         <p style = "display: inline-block; margin-right: 15px;" class="texttt">Select network you wish to use for transfering</p>
         <b-switch style = "margin-top: 6px" v-model="testnetSwitch"
@@ -10,6 +11,7 @@
                 {{testnetSwitch}}
         </b-switch>
       </div>
+
       <div class="box" style="margin-top: 5%;  font-family: 'Anybody', cursive;">
         You are logged in as {{$store.state.account}}.
       </div>
@@ -141,6 +143,7 @@
                 }
                 const api = await ApiPromise.create({ provider: wsProvider });
                 if(this.type == "AccountId32"){
+                  //Transfer scenario Parachain to Parachain
                     api.tx.polkadotXcm.reserveTransferAssets(
                         {
                             V1: {
@@ -195,6 +198,7 @@
                   });
                 }
                 else if (this.type == "AccountKey20"){
+                  //Transfer scenario Parachain to Parachain
                     api.tx.polkadotXcm.reserveTransferAssets(
                         {
                             V1: {

@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-
       <p  v-if="testnetSwitch == 'Astar'" class = "intro">Transfer Polkadot's DOT to Astar</p>
       <p  v-if="testnetSwitch == 'Shiden'" class = "intro">Transfer Kusama's KSM to Shiden</p>
 
@@ -12,6 +11,7 @@
                 {{testnetSwitch}}
         </b-switch>
       </div>
+      
       <div class="box" style="margin-top: 12%;  font-family: 'Anybody', cursive;">
         You are logged in as {{$store.state.account}}.
       </div>
