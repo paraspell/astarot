@@ -58,4 +58,5 @@ npm run serve
 ```
 npm run build
 ```
-
+# Project achievements
+- Astar XCM bounty Polkadot hackathon Latam [Bounty link](https://github.com/AstarNetwork/AstarBounties/pull/17)
