@@ -46,17 +46,17 @@ git clone https://github.com/dudo50/astarot.git
 
 #### Install dApp dependencies & packages
 ```
-pnpm i
+npm i
 ```
 
 #### Start dApp for development
 ```
-pnpm run serve
+npm run serve
 ```
 
 #### Build dApp for release
 ```
-pnpm run build
+npm run build
 ```
 # Project achievements
 - Astar XCM bounty Polkadot hackathon Latam [Bounty link](https://github.com/AstarNetwork/AstarBounties/pull/17)
