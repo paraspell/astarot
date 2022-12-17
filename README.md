@@ -10,7 +10,7 @@
 
 
 # 1. Introduction
-Application is deployed & able to be previewed on following link - [Try out Astarot on Heroku](https://astarot.herokuapp.com/)
+Application is deployed & able to be previewed on following link - [Try out Astarot on Netlify](https://639db68af6fa0409cc687d24--celebrated-melomakarona-c33425.netlify.app/#/)
 
 There are not that many XCM UI enhancing tools dedicated to Astar. A⭐️ot is enhancing native polkadotXCM pallet and alows user to transfer native XCM in three different scenarios. This saves time to users and developers also. A⭐️ot do not require specific message route from you, it fills it for you from simple details you are required to provide (way less details than if you were to construct call manually). Astarot benefits from really simple and easy to understand UI. As a new user you can adapt very quickly.
 
