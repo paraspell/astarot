@@ -32,12 +32,6 @@
         <b-input expanded @input.native="addrs($event)" v-model="addr"></b-input>
       </b-field>
 
-      <b-field class="textt" label-position="inside" label="Select destination account type">
-        <b-select v-model="type" expanded required>
-          <option v-for="(type) in accTypes" :key="type">{{type}}</option>
-        </b-select>
-      </b-field>
-
       <b-field class="textt" label-position="inside" label="Input asset amount">
         <b-input expanded @input.native="unit($event)" v-model="amount"></b-input>
       </b-field>
@@ -50,28 +44,23 @@
   <script lang="ts">
     import { ApiPromise, WsProvider } from '@polkadot/api'
     import { defineComponent } from '@vue/composition-api'
-    import { decodeAddress } from '@polkadot/util-crypto'
     import { web3FromAddress } from "@polkadot/extension-dapp"
-    import '@polkadot/api-augment';
+    import * as paraspell from '@paraspell/sdk'
     export default defineComponent({
     
       data() {
         return {
           items: [] as Array<number>,   //Stores Parachains connected to Relay chain Polkadot
           itemsK: [] as Array<number>,   //Stores Parachains connected to Relay chain Kusama
-          keyy: "" as string,   //Selected destination parachain
+          keyy: 0 as number,   //Selected destination parachain
           addr: "" as string,   //Recipient address is stored here
           amount: 0 as number,   //Required amount to be transfered is stored here
-          type: "" as string,
           testnetSwitch: "Shiden",
-          accTypes: [] as Array<string>,
         };
       },
       mounted: async function () {
         this.queryParas()
-        
-        this.accTypes.push("AccountKey20")
-        this.accTypes.push("AccountId32")
+
       },
       methods: {
         //Used to store recipient address
@@ -111,7 +100,7 @@
         },
         //Used to create XCM transfer
         async sendXCM(address: string) {
-          if(this.keyy == "") 
+          if(this.keyy == 0) 
           {
             this.$notify({ title: 'Error', text: 'You did not select parachain correctly.', type: 'error', duration: 3000,speed: 100})
           }
@@ -135,59 +124,21 @@
                 var counter = 0
                 const injector = await web3FromAddress(address); 
                 let wsProvider
+                let call
                 if(this.testnetSwitch == "Astar"){
                   wsProvider = new WsProvider('wss://public-rpc.pinknode.io/astar');
+                  const api = await ApiPromise.create({ provider: wsProvider });
+
+                  call = paraspell.xcmPallet.send(api, 'Astar', 'ASTR', 0, this.amount, this.addr, this.keyy)
                 }
                 else if (this.testnetSwitch == "Shiden"){
                   wsProvider = new WsProvider('wss://rpc.shiden.astar.network');
+                  const api = await ApiPromise.create({ provider: wsProvider });
+
+                  call = paraspell.xcmPallet.send(api, 'Shiden', 'SDN', 0, this.amount, this.addr, this.keyy)
                 }
-                const api = await ApiPromise.create({ provider: wsProvider });
-                if(this.type == "AccountId32"){
                   //Transfer scenario Parachain to Parachain
-                    api.tx.polkadotXcm.reserveTransferAssets(
-                        {
-                            V1: {
-                            parents: 1,
-                            interior: {
-                                X1: {
-                                    Parachain: this.keyy
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: {
-                            parents: 0,
-                            interior: {
-                                X1: {
-                                AccountId32: {
-                                network: "any",
-                                id: api
-                                    .createType("AccountId32", decodeAddress(this.addr))
-                                    .toHex()
-                                }
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: [
-                            {
-                                id: {
-                                Concrete: {
-                                    parents: 0,
-                                    interior: "Here"
-                                }
-                                },
-                                fun: {
-                                Fungible: this.amount
-                                }
-                            }
-                            ]
-                        },
-                        0
-                        )
-                  .signAndSend(address, { signer: injector.signer },  ({ status, txHash }) => {
+                  call?.signAndSend(address, { signer: injector.signer },  ({ status, txHash }) => {
                     if(counter == 0){    
                         this.$notify({ text: `Transaction hash is ${txHash.toHex()}`, duration: 10000,speed: 100})
                         counter++
@@ -197,60 +148,6 @@
                       }
                   });
                 }
-                else if (this.type == "AccountKey20"){
-                  //Transfer scenario Parachain to Parachain
-                    api.tx.polkadotXcm.reserveTransferAssets(
-                        {
-                            V1: {
-                            parents: 1,
-                            interior: {
-                                X1: {
-                                    Parachain: this.keyy
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: {
-                            parents: 0,
-                            interior: {
-                                X1: {
-                                AccountKey20: {
-                                network: "any",
-                                id: this.addr
-                                }
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: [
-                            {
-                                id: {
-                                Concrete: {
-                                    parents: 0,
-                                    interior: "Here"
-                                }
-                                },
-                                fun: {
-                                Fungible: this.amount
-                                }
-                            }
-                            ]
-                        },
-                        0
-                        )
-                  .signAndSend(address, { signer: injector.signer },  ({ status, txHash }) => {
-                    if(counter == 0){    
-                        this.$notify({ text: `Transaction hash is ${txHash.toHex()}`, duration: 10000,speed: 100})
-                        counter++
-                      }
-                      if (status.isFinalized) {
-                        this.$notify({ text: `Transaction finalized at blockHash ${status.asFinalized}`,type: 'success',duration: 10000,speed: 100})
-                      }
-                  });
-                }
-              }
             }
             }
           }

@@ -32,9 +32,9 @@
   <script lang="ts">
     import { ApiPromise, WsProvider } from '@polkadot/api'
     import { defineComponent } from '@vue/composition-api'
-    import '@polkadot/api-augment';
     import { web3FromAddress } from "@polkadot/extension-dapp"
-    import { decodeAddress } from '@polkadot/util-crypto'
+    import * as paraspell from '@paraspell/sdk'
+
     export default defineComponent({
       name: "RelayToPara",
       data() {
@@ -73,75 +73,36 @@
                 }
                 else{
                   let wsProvider
+                  let call
+
                   if(this.testnetSwitch == "Astar"){
                     wsProvider = new WsProvider('wss://polkadot.api.onfinality.io/public-ws');
+                    const api = await ApiPromise.create({ provider: wsProvider });
+
+                    call = paraspell.xcmPallet.transferRelayToPara(api, 2006, this.amount, this.addr)
                   }
                   else if (this.testnetSwitch == "Shiden"){
                     wsProvider = new WsProvider('wss://public-rpc.pinknode.io/kusama');
+                    const api = await ApiPromise.create({ provider: wsProvider });
+
+                    call = paraspell.xcmPallet.transferRelayToPara(api, 2007, this.amount, this.addr)
                   }
-                  const api = await ApiPromise.create({ provider: wsProvider });
                   var counter = 0
                   const injector = await web3FromAddress(address); // finds an injector for an address
-                  console.log(`polakdotSigner ===> injector: `,injector);
-                    //API call for XCM transfer From Relay chain to Parachains /w injected wallet
-                        api.tx.xcmPallet
-                        .reserveTransferAssets(
-                        {
-                            V1: {
-                            parents: 0,
-                            interior: {
-                                X1: {
-                                    Parachain: 2006
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: {
-                            parents: 0,
-                            interior: {
-                                X1: {
-                                AccountId32: {
-                                network: "any",
-                                id: api
-                                    .createType("AccountId32", decodeAddress(this.addr))
-                                    .toHex()
-                                }
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: [
-                            {
-                                id: {
-                                Concrete: {
-                                    parents: 0,
-                                    interior: "Here"
-                                }
-                                },
-                                fun: {
-                                Fungible: this.amount
-                                }
-                            }
-                            ]
-                        },
-                        0
-                        )
-                        .signAndSend(address, { signer: injector.signer }, ({ status, txHash }) => {
-                        if(counter == 0){    
-                            this.$notify({ text: `Transaction hash is ${txHash.toHex()}`, duration: 10000,speed: 100})
-                            counter++
-                        }
-                        if (status.isFinalized) {
-                            this.$notify({ text: `Transaction finalized at blockHash ${status.asFinalized}`,type: 'success', duration: 10000,speed: 100})
-                        }
-                        });
+                  call?.signAndSend(address, { signer: injector.signer }, ({ status, txHash }) => {
+                    if(counter == 0){    
+                      this.$notify({ text: `Transaction hash is ${txHash.toHex()}`, duration: 10000,speed: 100})
+                      counter++
                     }
+                    if (status.isFinalized) {
+                      this.$notify({ text: `Transaction finalized at blockHash ${status.asFinalized}`,type: 'success', duration: 10000,speed: 100})
                     }
+                  });
                 }
-                }
+              }
             }
+          }
+        }
     })
   </script>
   

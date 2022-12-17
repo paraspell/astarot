@@ -32,9 +32,8 @@
   <script lang="ts">
     import { ApiPromise, WsProvider } from '@polkadot/api'
     import { defineComponent } from '@vue/composition-api'
-    import { decodeAddress } from '@polkadot/util-crypto'
+    import * as paraspell from '@paraspell/sdk'
     import { web3FromAddress } from "@polkadot/extension-dapp"
-    import '@polkadot/api-augment';
     export default defineComponent({
     
       data() {
@@ -79,54 +78,21 @@
                 var counter = 0
                   const injector = await web3FromAddress(address); 
                   let wsProvider
+                  let call
                   if(this.testnetSwitch == "Astar"){
                     wsProvider = new WsProvider('wss://public-rpc.pinknode.io/astar');
+                    const api = await ApiPromise.create({ provider: wsProvider });
+
+                    call = paraspell.xcmPallet.send(api, 'Astar', 'DOT', 0, this.amount, this.addr)
                   }
                   else if (this.testnetSwitch == "Shiden"){
                     wsProvider = new WsProvider('wss://rpc.shiden.astar.network');
+                    const api = await ApiPromise.create({ provider: wsProvider });
+
+                    call = paraspell.xcmPallet.send(api, 'Shiden', 'KSM', 0, this.amount, this.addr)
                   }
-                  const api = await ApiPromise.create({ provider: wsProvider });
                     //API call for Parachain to Relay chain transfer scenario
-                    api.tx.polkadotXcm.reserveWithdrawAssets(
-                        {
-                            V1: {
-                            parents: 1,
-                            interior: "Here"
-                            }
-                        },
-                        {
-                            V1: {
-                            parents: 0,
-                            interior: {
-                                X1: {
-                                AccountId32: {
-                                network: "any",
-                                id: api
-                                    .createType("AccountId32", decodeAddress(this.addr))
-                                    .toHex()
-                                }
-                                }
-                            }
-                            }
-                        },
-                        {
-                            V1: [
-                            {
-                                id: {
-                                Concrete: {
-                                    parents: 1,
-                                    interior: "Here"
-                                }
-                                },
-                                fun: {
-                                Fungible: this.amount
-                                }
-                            }
-                            ]
-                        },
-                        0
-                        )
-                  .signAndSend(address, { signer: injector.signer }, ({ status, txHash }) => {
+                    call?.signAndSend(address, { signer: injector.signer }, ({ status, txHash }) => {
                     if(counter == 0){    
                       this.$notify({ text: `Transaction hash is ${txHash.toHex()}`, duration: 10000,speed: 100})
                       counter++
